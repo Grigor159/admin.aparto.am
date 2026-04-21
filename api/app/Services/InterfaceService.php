@@ -821,7 +821,7 @@ class InterFaceService
                     }
                 }
 
-                if ($data['searchData']['newBuild'] !== 'on') {
+                if (Arr::get($data, 'searchData.newBuild') && Arr::get($data, 'searchData.newBuild') !== 'on') {
                     if ($home->am[4]->fields[2]->value !== true) {
                         return false;
                         // $isMatched = false;
