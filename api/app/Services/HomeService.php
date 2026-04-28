@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\GlobalForm;
@@ -462,7 +463,7 @@ class HomeService
     $assocCopyFormAm = array_combine($keysAm, $copyGeneralFormAm);
     $assocCopyFormRu = array_combine($keysRu, $copyGeneralFormRu);
     $assocCopyFormEn = array_combine($keysEn, $copyGeneralFormEn);
-  
+
     $data['seo'] = $this->mergeSeoInInitial($data);
 
     foreach ($data as $idx => $item) {
@@ -545,7 +546,6 @@ class HomeService
                     ];
 
                     $assocCopyFormAm[$idx]->fields[$globKey]->allAnswers = $prepareAllAnswerTitlen;
-
                   }
                   if ($globalVal->key == 'description') {
                     $descriptionAm = Arr::get($value, 'descriptionAm') ? Arr::get($value, 'descriptionAm')
@@ -566,7 +566,6 @@ class HomeService
                     ];
 
                     $assocCopyFormAm[$idx]->fields[$globKey]->allAnswers = $prepareAllAnswerDes;
-
                   }
                 } else {
                   foreach ($value as $indText => $textItem) {
@@ -585,7 +584,6 @@ class HomeService
                   }
                   $assocCopyFormAm[$idx]->fields[$globKey]->allAnswers = $value;
                 }
-
               }
             }
             if ($globalVal->type == "inputNumber") {
@@ -670,7 +668,6 @@ class HomeService
                   $assocCopyFormEn[$idx]->fields[$globKey]->value = $value;
                 }
               }
-
             }
 
             if ($globalVal->type == "inputNumberSymbol") {
@@ -1004,6 +1001,20 @@ class HomeService
       $query->where('status', $this->getStatusFilter($data['prop_status']));
     }
 
+    // feature for agent and manager to see only their properties
+    if (!empty($data['is_my_property'])) {
+      $authId = auth()->id();
+      $query->where(function ($q) use ($authId) {
+        $q->whereRaw("
+                JSON_UNQUOTE(JSON_EXTRACT(am, '$[11].fields[0].id')) = ?
+            ", [$authId])
+          ->orWhereRaw("
+                JSON_UNQUOTE(JSON_EXTRACT(am, '$[10].fields[0].id')) = ?
+            ", [$authId]);
+      });
+    }
+    //
+
     if (!empty($data['prop_minSquare']) || !empty($data['prop_maxSquare'])) {
       $minSquare = $data['prop_minSquare'] ?? 0;
       $maxSquare = $data['prop_maxSquare'] ?? 1000000000;
@@ -1196,7 +1207,7 @@ class HomeService
                 if ($assocCopyFormAm[$idx]->name == 'seo') {
                   if ($globalVal->key == 'urlSlug') {
                     $existTitle = $data['announcement']['announcementTitle']['announcementTitleEn'] ??
-                    $copyGeneralFormEn[0]->fields[2]->value;
+                      $copyGeneralFormEn[0]->fields[2]->value;
                     $urlSlug = $value
                       ? Str::slug($value)
                       : Str::slug($existTitle);
@@ -1363,5 +1374,4 @@ class HomeService
       ->pluck('id')
       ->toArray();
   }
-
 }

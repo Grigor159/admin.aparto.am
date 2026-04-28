@@ -16,6 +16,7 @@ import {
   BuildingType,
   Situation,
   Status,
+  PROPERTIES,
 } from "./data";
 import { InputSymbol } from "../inputs/InputSymbol";
 import { BtnCustom } from "../../../../components/buttons/BtnCustom";
@@ -29,6 +30,12 @@ export const SearchBox = ({ setProperties }) => {
 
   const propertiesSearch = (e) => {
     let { id, value } = e.target;
+
+    // new
+    if (id === "is_my_property") {
+      value = value === "true";
+    }
+    //
 
     setProperties((prev) => {
       return { ...prev, [id]: value };
@@ -111,6 +118,12 @@ export const SearchBox = ({ setProperties }) => {
             name="price"
             onChange={propertiesSearch}
             width="145px"
+          />
+          <Drowpdown
+            id="is_my_property"
+            onChange={propertiesSearch}
+            data={PROPERTIES}
+            width="200px"
           />
         </div>
         <div

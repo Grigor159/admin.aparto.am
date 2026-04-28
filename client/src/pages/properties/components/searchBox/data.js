@@ -1,3 +1,8 @@
+export const PROPERTIES = [
+  { value: "false", name: "Բոլորը" },
+  { value: "true", name: "Իմ գույքերը" },
+];
+
 export const SaleRent = [
   {
     id: 1,
